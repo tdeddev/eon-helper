@@ -41,12 +41,10 @@ router.post('/token', async (req, res) => {
         if (req.body) {
             token = req.body.data
         }
-        console.log(token)
     } catch (error) {
         console.log(error)
     }
 })
-
 
 router.get('/', async (req, res) => {
     try {
@@ -57,7 +55,6 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/getProfile', async (req, res) => {
-    console.log('token', token)
     try {
         const profiles = await profile()
         if (profiles) {
@@ -127,6 +124,7 @@ const redeem = async (uid, code) => {
         console.log(error.response.data)
     }
 }
+
 const daily = async (uid, packageId) => {
     try {
         const response = await axios.post(
@@ -216,6 +214,5 @@ const getPackgeId = async () => {
         console.log(error.response)
     }
 }
-
 
 module.exports = router
