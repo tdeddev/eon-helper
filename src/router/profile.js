@@ -56,6 +56,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/getProfile', async (req, res) => {
+    console.log('token', token)
     try {
         const profiles = await profile()
         if (profiles) {
