@@ -41,8 +41,9 @@ router.post('/token', async (req, res) => {
         if (req.body) {
             token = req.body.data
         }
+        console.log(token)
     } catch (error) {
-        console.log(error.response)
+        console.log(error)
     }
 })
 
