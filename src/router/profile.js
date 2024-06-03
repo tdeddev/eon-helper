@@ -146,6 +146,10 @@ router.post('/token', async (req, res) => {
         if (req.body) {
             profile.token = req.body.data
         }
+        res.send({
+            msg: 'OK',
+            code: 0
+        })
     } catch (error) {
         console.log(error)
     }
@@ -161,6 +165,7 @@ router.get('/', async (req, res) => {
 
 router.get('/getProfile', async (req, res) => {
     try {
+        console.log("🚀 ~ router.get ~ profile.token:", profile.token)
         const profiles = await profile.profile()
         if (profiles) {
             res.json(profiles)
