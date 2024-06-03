@@ -10,25 +10,9 @@ class User {
     }
     async profile () {
         try {
-            const response = await axios.get(`${url}user/2/info`, {
-                params: {
-                    'serverId': '10002'
-                },
+            const response = await axios.get(`${url}user/2/info?serverId=0`, {
                 headers: {
-                    'accept': 'application/json, text/plain, */*',
-                    'accept-language': 'en-US,en;q=0.9',
                     'authorization': `Bearer ${this.token}`,
-                    'if-none-match': 'W/"160-ANEnGLvLTlVdyheZsLD0Ycj+QmQ"',
-                    'origin': 'https://www.eonhub.net',
-                    'priority': 'u=1, i',
-                    'referer': 'https://www.eonhub.net/',
-                    'sec-ch-ua': '"Microsoft Edge";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
-                    'sec-ch-ua-mobile': '?0',
-                    'sec-ch-ua-platform': '"Windows"',
-                    'sec-fetch-dest': 'empty',
-                    'sec-fetch-mode': 'cors',
-                    'sec-fetch-site': 'cross-site',
-                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0'
                 }
             });
             if (response.data.status == 200) {
