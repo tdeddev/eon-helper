@@ -8,7 +8,11 @@ class User {
     constructor(token) {
         this.token = token
     }
-    async profile () {
+    show() {
+        console.log('token', this.token)
+    }
+
+    async profile() {
         try {
             const response = await axios.get(`${url}user/2/info?serverId=0`, {
                 headers: {
@@ -23,7 +27,7 @@ class User {
         }
     }
 
-    async redeem (uid, code) {
+    async redeem(uid, code) {
         try {
             const response = await axios.post(
                 `${url}package/apply`,
@@ -40,15 +44,15 @@ class User {
             );
             if (response.data.status == 200) {
                 console.log(response.data.message)
-            } else {
-                console.log(response.data.message)
+                return response.data.message
             }
         } catch (error) {
-            console.log(error.response.data)
+            console.log(error.response.data.message)
+            return response.data.message
         }
     }
 
-    async daily (uid, packageId) {
+    async daily(uid, packageId) {
         try {
             const response = await axios.post(
                 `${url}package/2/purchase/${packageId}`,
@@ -75,14 +79,14 @@ class User {
                 }
             );
             if (response.data.status == 200) {
-                console.log('Redeem Success!')
+                console.log(uid, 'Redeem Success!')
             }
         } catch (error) {
-            console.log(error.response.data.message)
+            console.log(uid, error.response.data.message)
         }
     }
 
-    async getPackgeId () {
+    async getPackgeId() {
         try {
             const RESPONESE_BIG_BRO_PREMIUM_DAILY_REWARD = await axios.get(`${url}package/2?packageType=BIG_BRO_PREMIUM_DAILY_REWARD`, {
                 headers: {
@@ -139,17 +143,32 @@ class User {
     }
 }
 
-let profile = new User()
+class Users {
+    constructor() {
+        this.profiles = []
+    }
 
+    newUsers(token) {
+        let profile = new User(token)
+        this.profiles.push(profile)
+        return profile
+    }
+
+    get numberOfUsers() {
+        return this.profiles.length
+    }
+}
+
+let arrProfile = new Users()
+const duplicate = []
 router.post('/token', async (req, res) => {
     try {
-        if (req.body) {
-            profile.token = req.body.data
+        const { data } = req.body
+        if (data && duplicate.indexOf(data) === -1) {
+            duplicate.push(data)
+            arrProfile.newUsers(data)
         }
-        res.send({
-            msg: 'OK',
-            code: 0
-        })
+        res.json(arrProfile.profiles)
     } catch (error) {
         console.log(error)
     }
@@ -165,8 +184,7 @@ router.get('/', async (req, res) => {
 
 router.get('/getProfile', async (req, res) => {
     try {
-        console.log("🚀 ~ router.get ~ profile.token:", profile.token)
-        const profiles = await profile.profile()
+        const profiles = await arrProfile.profiles[arrProfile.profiles.length - 1].profile()
         if (profiles) {
             res.json(profiles)
         }
@@ -177,10 +195,17 @@ router.get('/getProfile', async (req, res) => {
 
 router.post('/reward', async (req, res) => {
     try {
-        const uid = req.body.uid
-        const packageId = await profile.getPackgeId()
-        for (package of packageId) {
-            await profile.daily(uid, package)
+        const { uid, token } = req.body
+        if (arrProfile.profiles.length > 0) {
+            for (let i = 0; i < arrProfile.profiles.length; i++) {
+                const profile = arrProfile.profiles[i]
+                if (profile.token === token) {
+                    const packageId = await profile.getPackgeId()
+                    for (package of packageId) {
+                        await profile.daily(uid, package)
+                    }
+                }
+            }
         }
         res.send({
             code: 0,
@@ -193,11 +218,15 @@ router.post('/reward', async (req, res) => {
 
 router.post('/redeem', async (req, res) => {
     try {
-        const code = req.body.code
-        const uid = req.body.uid
-        if (code) {
-            for (c of code) {
-                await profile.redeem(uid, c)
+        const { code, uid, token } = req.body
+        if (arrProfile.profiles.length > 0) {
+            for (let i = 0; i < arrProfile.profiles.length; i++) {
+                const profile = arrProfile.profiles[i]
+                if (profile.token === token) {
+                    for (c of code) {
+                        await profile.redeem(uid, c)
+                    }
+                }
             }
         }
         res.send({
