@@ -44,11 +44,9 @@ class User {
             );
             if (response.data.status == 200) {
                 console.log(response.data.message)
-                return response.data.message
             }
         } catch (error) {
             console.log(error.response.data.message)
-            return error.response.data.message
         }
     }
 
