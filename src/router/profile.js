@@ -48,7 +48,7 @@ class User {
             }
         } catch (error) {
             console.log(error.response.data.message)
-            return response.data.message
+            return error.response.data.message
         }
     }
 
